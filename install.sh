@@ -26,6 +26,9 @@ git clone --depth 1 https://github.com/anonychun/ecorp.git "$TMP_DIR"
 cd "$TMP_DIR"
 grep -rl "github.com/anonychun/ecorp" . | xargs sed -i "s|github.com/anonychun/ecorp|$PROJECT|g"
 
+# Copy .env.sample to .env
+cp .env.sample .env
+
 # Remove unnecessary files
 rm -rf .git install.sh
 
