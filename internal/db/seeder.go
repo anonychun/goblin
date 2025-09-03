@@ -6,7 +6,6 @@ import (
 	"github.com/anonychun/ecorp/internal/bootstrap"
 	"github.com/anonychun/ecorp/internal/entity"
 	"github.com/samber/do"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -24,20 +23,18 @@ func NewSeeder(i *do.Injector) (*Seeder, error) {
 	}, nil
 }
 
-func (s *Seeder) Seed() error {
-	ctx := context.Background()
-	defaultAdminEmail := "anonychun@gmail.com"
+func (s *Seeder) Seed(ctx context.Context) error {
+	defaultAdmin := &entity.Admin{
+		Name:         "Achmad Chun Chun",
+		EmailAddress: "anonychun@gmail.com",
+	}
+
 	defaultAdminPassword := "didbnyaada"
-	hashedDefaultAdminPassword, err := bcrypt.GenerateFromPassword([]byte(defaultAdminPassword), bcrypt.DefaultCost)
+	err := defaultAdmin.HashPassword(defaultAdminPassword)
 	if err != nil {
 		return err
 	}
 
-	defaultAdmin := &entity.Admin{
-		Name:           "Achmad Chun Chun",
-		EmailAddress:   defaultAdminEmail,
-		PasswordDigest: string(hashedDefaultAdminPassword),
-	}
 	err = s.sql.DB(ctx).First(defaultAdmin, "email_address = ?", defaultAdmin.EmailAddress).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return err
