@@ -3,6 +3,8 @@ package auth
 import (
 	"context"
 
+	"github.com/anonychun/ecorp/internal/consts"
+	"github.com/anonychun/ecorp/internal/current"
 	"github.com/anonychun/ecorp/internal/entity"
 )
 
@@ -46,5 +48,14 @@ func (u *Usecase) Logout(ctx context.Context, req LogoutRequest) error {
 }
 
 func (u *Usecase) Me(ctx context.Context) (*MeResponse, error) {
-	return &MeResponse{}, nil
+	admin := current.Admin(ctx)
+	if admin == nil {
+		return nil, consts.ErrUnauthorized
+	}
+
+	res := &MeResponse{}
+	res.Admin.Id = admin.Id.String()
+	res.Admin.EmailAddress = admin.EmailAddress
+
+	return res, nil
 }

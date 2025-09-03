@@ -1,4 +1,4 @@
-package article
+package admin_session
 
 import (
 	"github.com/anonychun/ecorp/internal/bootstrap"
@@ -10,7 +10,7 @@ func init() {
 	do.ProvideNamed(bootstrap.Injector, RepositoryInjectorName, NewRepository)
 }
 
-const RepositoryInjectorName = "repository.article"
+const RepositoryInjectorName = "repository.admin_session"
 
 type Repository struct {
 	sql *db.Sql

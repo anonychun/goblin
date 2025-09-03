@@ -4,26 +4,27 @@ import (
 	"net/http"
 
 	"github.com/anonychun/ecorp/internal/api"
+	"github.com/anonychun/ecorp/internal/consts"
 	"github.com/labstack/echo/v4"
 )
 
 func (h *Handler) Login(c echo.Context) error {
-	req := &LoginRequest{
+	req := LoginRequest{
 		IpAddress: c.RealIP(),
 		UserAgent: c.Request().UserAgent(),
 	}
-	err := c.Bind(req)
+	err := c.Bind(&req)
 	if err != nil {
 		return err
 	}
 
-	res, err := h.usecase.Login(c.Request().Context(), *req)
+	res, err := h.usecase.Login(c.Request().Context(), req)
 	if err != nil {
 		return err
 	}
 
 	c.SetCookie(&http.Cookie{
-		Name:     "admin_session",
+		Name:     consts.CookieAdminSession,
 		Value:    res.Token,
 		Path:     "/",
 		HttpOnly: true,
@@ -33,22 +34,22 @@ func (h *Handler) Login(c echo.Context) error {
 }
 
 func (h *Handler) Logout(c echo.Context) error {
-	cookie, err := c.Cookie("admin_session")
+	cookie, err := c.Cookie(consts.CookieAdminSession)
 	if err != nil {
 		return err
 	}
 
-	req := &LogoutRequest{
+	req := LogoutRequest{
 		Token: cookie.Value,
 	}
 
-	err = h.usecase.Logout(c.Request().Context(), *req)
+	err = h.usecase.Logout(c.Request().Context(), req)
 	if err != nil {
 		return err
 	}
 
 	c.SetCookie(&http.Cookie{
-		Name:     "admin_session",
+		Name:     consts.CookieAdminSession,
 		Value:    "",
 		Path:     "/",
 		HttpOnly: true,
@@ -59,5 +60,10 @@ func (h *Handler) Logout(c echo.Context) error {
 }
 
 func (h *Handler) Me(c echo.Context) error {
-	return api.NewResponse(c).SendOk()
+	res, err := h.usecase.Me(c.Request().Context())
+	if err != nil {
+		return err
+	}
+
+	return api.NewResponse(c).SetData(res).Send()
 }

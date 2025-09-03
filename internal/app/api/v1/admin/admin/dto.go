@@ -2,13 +2,13 @@ package admin
 
 import "github.com/anonychun/ecorp/internal/entity"
 
-type AdminResponse struct {
+type AdminDto struct {
 	Id   string `json:"id"`
 	Name string `json:"name"`
 }
 
-func NewAdminResponse(admin *entity.Admin) *AdminResponse {
-	return &AdminResponse{
+func NewAdminDto(admin *entity.Admin) *AdminDto {
+	return &AdminDto{
 		Id:   admin.Id.String(),
 		Name: admin.Name,
 	}

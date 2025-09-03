@@ -4,8 +4,9 @@ import (
 	"github.com/anonychun/ecorp/internal/api"
 	"github.com/anonychun/ecorp/internal/app"
 	"github.com/anonychun/ecorp/internal/bootstrap"
+	"github.com/anonychun/ecorp/internal/middleware"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	echomiddleware "github.com/labstack/echo/v4/middleware"
 	"github.com/samber/do"
 )
 
@@ -14,15 +15,18 @@ func namespace(e *echo.Group, path string, f func(e *echo.Group)) {
 }
 
 func routes(e *echo.Echo) error {
+	m := do.MustInvoke[*middleware.Middleware](bootstrap.Injector)
 	h := do.MustInvoke[*app.Handler](bootstrap.Injector)
 
 	e.HTTPErrorHandler = api.HttpErrorHandler
-	e.Use(middleware.Recover())
-	e.Use(middleware.Logger())
+	e.Use(echomiddleware.Recover())
+	e.Use(echomiddleware.Logger())
 
 	apiRouter := e.Group("/api")
 	namespace(apiRouter, "/v1", func(e *echo.Group) {
 		namespace(e, "/admin", func(e *echo.Group) {
+			e.Use(m.Auth.AuthenticateAdmin)
+
 			e.POST("/auth/login", h.Api.V1.Admin.Auth.Login)
 			e.POST("/auth/logout", h.Api.V1.Admin.Auth.Logout)
 			e.GET("/auth/me", h.Api.V1.Admin.Auth.Me)
@@ -39,6 +43,7 @@ func routes(e *echo.Echo) error {
 
 		namespace(e, "/landing", func(e *echo.Group) {
 		})
+
 	})
 
 	return nil

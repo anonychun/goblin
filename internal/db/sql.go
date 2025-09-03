@@ -8,6 +8,7 @@ import (
 
 	"github.com/anonychun/ecorp/internal/bootstrap"
 	"github.com/anonychun/ecorp/internal/config"
+	"github.com/anonychun/ecorp/internal/current"
 	"github.com/samber/do"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -60,22 +61,12 @@ func NewSql(i *do.Injector) (*Sql, error) {
 }
 
 func (s *Sql) DB(ctx context.Context) *gorm.DB {
-	value := ctx.Value(txKey)
-	if value == nil {
-		tx, ok := value.(*gorm.DB)
-		if ok {
-			return tx
-		}
+	tx := current.Tx(ctx)
+	if tx != nil {
+		return tx
 	}
 
 	return s.gormDB.WithContext(ctx)
-}
-
-func (s *Sql) Transaction(ctx context.Context, fn func(ctx context.Context) error) error {
-	return s.gormDB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		ctx = context.WithValue(ctx, txKey, tx)
-		return fn(ctx)
-	})
 }
 
 func CreateSqlDatabase() error {
