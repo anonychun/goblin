@@ -29,7 +29,7 @@ func (h *Handler) Login(c echo.Context) error {
 		HttpOnly: true,
 	})
 
-	return c.JSON(http.StatusOK, res)
+	return api.NewResponse(c).SetData(res).Send()
 }
 
 func (h *Handler) Logout(c echo.Context) error {
@@ -55,7 +55,7 @@ func (h *Handler) Logout(c echo.Context) error {
 		MaxAge:   -1,
 	})
 
-	return c.NoContent(http.StatusOK)
+	return c.NoContent(http.StatusNoContent)
 }
 
 func (h *Handler) Me(c echo.Context) error {
