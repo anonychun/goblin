@@ -2,8 +2,9 @@ package config
 
 import (
 	"github.com/anonychun/ecorp/internal/bootstrap"
+	"github.com/joho/godotenv"
+	"github.com/kelseyhightower/envconfig"
 	"github.com/samber/do"
-	"github.com/spf13/viper"
 )
 
 func init() {
@@ -12,34 +13,25 @@ func init() {
 
 type Config struct {
 	Server struct {
-		Port int `mapstructure:"port"`
-	} `mapstructure:"server"`
+		Port int `envconfig:"port"`
+	} `envconfig:"server"`
 
 	Database struct {
 		Sql struct {
-			Host     string `mapstructure:"host"`
-			Port     int    `mapstructure:"port"`
-			User     string `mapstructure:"user"`
-			Password string `mapstructure:"password"`
-			Name     string `mapstructure:"name"`
-		} `mapstructure:"sql"`
-	} `mapstructure:"database"`
+			Host     string `envconfig:"host"`
+			Port     int    `envconfig:"port"`
+			User     string `envconfig:"user"`
+			Password string `envconfig:"password"`
+			Name     string `envconfig:"name"`
+		} `envconfig:"sql"`
+	} `envconfig:"database"`
 }
 
 func NewConfig(i *do.Injector) (*Config, error) {
-	v := viper.New()
-
-	v.SetConfigType("env")
-	v.SetConfigFile(".env")
-	v.AutomaticEnv()
-
-	err := v.ReadInConfig()
-	if err != nil {
-		return nil, err
-	}
+	godotenv.Load(".env")
 
 	config := &Config{}
-	err = v.Unmarshal(config)
+	err := envconfig.Process("", config)
 	if err != nil {
 		return nil, err
 	}
