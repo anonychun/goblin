@@ -35,7 +35,13 @@ func (u *Usecase) FindById(ctx context.Context, req FindByIdRequest) (*AdminDto,
 
 func (u *Usecase) Create(ctx context.Context, req CreateRequest) (*AdminDto, error) {
 	admin := &entity.Admin{
-		Name: req.Name,
+		Name:         req.Name,
+		EmailAddress: req.EmailAddress,
+	}
+
+	err := admin.HashPassword(req.Password)
+	if err != nil {
+		return nil, err
 	}
 
 	if err := u.repository.Admin.Create(ctx, admin); err != nil {
@@ -54,6 +60,7 @@ func (u *Usecase) Update(ctx context.Context, req UpdateRequest) (*AdminDto, err
 	}
 
 	admin.Name = req.Name
+	admin.EmailAddress = req.EmailAddress
 
 	if err := u.repository.Admin.Update(ctx, admin); err != nil {
 		return nil, err

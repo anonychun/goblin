@@ -19,12 +19,15 @@ type FindByIdRequest struct {
 }
 
 type CreateRequest struct {
-	Name string `json:"name"`
+	Name         string `json:"name"`
+	EmailAddress string `json:"email_address"`
+	Password     string `json:"password"`
 }
 
 type UpdateRequest struct {
-	Id   string `param:"id"`
-	Name string `json:"name"`
+	Id           string `param:"id"`
+	Name         string `json:"name"`
+	EmailAddress string `json:"email_address"`
 }
 
 type DeleteRequest struct {
