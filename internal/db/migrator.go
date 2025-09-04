@@ -33,12 +33,12 @@ func NewMigrator(i *do.Injector) (*Migrator, error) {
 	}, nil
 }
 
-func (m *Migrator) Up(ctx context.Context) error {
+func (m *Migrator) Migrate(ctx context.Context) error {
 	_, err := m.provider.Up(ctx)
 	return err
 }
 
-func (m *Migrator) Down(ctx context.Context) error {
+func (m *Migrator) Rollback(ctx context.Context) error {
 	_, err := m.provider.Down(ctx)
 	return err
 }

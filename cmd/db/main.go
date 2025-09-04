@@ -16,19 +16,19 @@ func main() {
 
 	cmd.Commands = []*cli.Command{
 		{
-			Name:  "up",
+			Name:  "migrate",
 			Usage: "Apply all pending migrations",
 			Action: func(ctx context.Context, c *cli.Command) error {
 				migrator := do.MustInvoke[*db.Migrator](bootstrap.Injector)
-				return migrator.Up(ctx)
+				return migrator.Migrate(ctx)
 			},
 		},
 		{
-			Name:  "down",
+			Name:  "rollback",
 			Usage: "Revert the last applied migration",
 			Action: func(ctx context.Context, c *cli.Command) error {
 				migrator := do.MustInvoke[*db.Migrator](bootstrap.Injector)
-				return migrator.Down(ctx)
+				return migrator.Rollback(ctx)
 			},
 		},
 		{
@@ -63,7 +63,7 @@ func main() {
 				}
 
 				migrator := do.MustInvoke[*db.Migrator](bootstrap.Injector)
-				err = migrator.Up(ctx)
+				err = migrator.Migrate(ctx)
 				if err != nil {
 					return err
 				}
@@ -87,7 +87,7 @@ func main() {
 				}
 
 				migrator := do.MustInvoke[*db.Migrator](bootstrap.Injector)
-				err = migrator.Up(ctx)
+				err = migrator.Migrate(ctx)
 				if err != nil {
 					return err
 				}
