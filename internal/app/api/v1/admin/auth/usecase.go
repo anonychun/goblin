@@ -6,12 +6,11 @@ import (
 	"github.com/anonychun/ecorp/internal/consts"
 	"github.com/anonychun/ecorp/internal/current"
 	"github.com/anonychun/ecorp/internal/entity"
-	"gorm.io/gorm"
 )
 
 func (u *Usecase) Login(ctx context.Context, req LoginRequest) (*LoginResponse, error) {
 	admin, err := u.repository.Admin.FindByEmailAddress(ctx, req.EmailAddress)
-	if err == gorm.ErrRecordNotFound {
+	if err == consts.ErrRecordNotFound {
 		return nil, consts.ErrInvalidCredentials
 	} else if err != nil {
 		return nil, err
@@ -43,7 +42,7 @@ func (u *Usecase) Login(ctx context.Context, req LoginRequest) (*LoginResponse, 
 
 func (u *Usecase) Logout(ctx context.Context, req LogoutRequest) error {
 	adminSession, err := u.repository.AdminSession.FindByToken(ctx, req.Token)
-	if err == gorm.ErrRecordNotFound {
+	if err == consts.ErrRecordNotFound {
 		return consts.ErrUnauthorized
 	} else if err != nil {
 		return err

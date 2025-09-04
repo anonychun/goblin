@@ -6,7 +6,6 @@ import (
 	"github.com/anonychun/ecorp/internal/consts"
 	"github.com/anonychun/ecorp/internal/entity"
 	"github.com/samber/lo"
-	"gorm.io/gorm"
 )
 
 func (u *Usecase) FindAll(ctx context.Context) ([]*AdminDto, error) {
@@ -24,7 +23,7 @@ func (u *Usecase) FindAll(ctx context.Context) ([]*AdminDto, error) {
 
 func (u *Usecase) FindById(ctx context.Context, req FindByIdRequest) (*AdminDto, error) {
 	admin, err := u.repository.Admin.FindById(ctx, req.Id)
-	if err == gorm.ErrRecordNotFound {
+	if err == consts.ErrRecordNotFound {
 		return nil, consts.ErrAdminNotFound
 	} else if err != nil {
 		return nil, err
@@ -53,7 +52,7 @@ func (u *Usecase) Create(ctx context.Context, req CreateRequest) (*AdminDto, err
 
 func (u *Usecase) Update(ctx context.Context, req UpdateRequest) (*AdminDto, error) {
 	admin, err := u.repository.Admin.FindById(ctx, req.Id)
-	if err == gorm.ErrRecordNotFound {
+	if err == consts.ErrRecordNotFound {
 		return nil, consts.ErrAdminNotFound
 	} else if err != nil {
 		return nil, err
