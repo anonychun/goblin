@@ -34,7 +34,7 @@ func Start(ctx context.Context) error {
 	}()
 
 	<-ctx.Done()
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
 	return e.Shutdown(ctx)
